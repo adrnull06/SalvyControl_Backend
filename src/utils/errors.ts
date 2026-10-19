@@ -22,3 +22,8 @@ export const noAutenticado = (mensaje = 'Debes iniciar sesión') =>
   new AppError(401, 'NO_AUTENTICADO', mensaje);
 export const prohibido = (mensaje = 'No tienes permiso para esto') =>
   new AppError(403, 'PROHIBIDO', mensaje);
+export const codigoPg = (err: unknown): string | undefined => {
+  const e = err as { code?: unknown; cause?: { code?: unknown } };
+  const codigo = e?.cause?.code ?? e?.code;
+  return typeof codigo === 'string' ? codigo : undefined;
+};

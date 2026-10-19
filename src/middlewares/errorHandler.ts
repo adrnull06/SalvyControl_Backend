@@ -6,15 +6,9 @@
 // Express 5 envía aquí también los errores de funciones async, sin código extra.
 import type { ErrorRequestHandler, RequestHandler } from 'express';
 import { ZodError } from 'zod';
-import { AppError } from '../utils/errors.js';
+import { AppError, codigoPg } from '../utils/errors.js';
 import { logger } from '../utils/logger.js';
 
-// Drizzle envuelve el error original de PostgreSQL en `cause`; revisamos ambos sitios.
-const codigoPg = (err: unknown): string | undefined => {
-  const e = err as { code?: unknown; cause?: { code?: unknown } };
-  const codigo = e?.cause?.code ?? e?.code;
-  return typeof codigo === 'string' ? codigo : undefined;
-};
 
 // Ruta que no existe -> 404 con nuestro formato (si no, Express devuelve HTML).
 export const rutaNoEncontrada: RequestHandler = (req, _res, next) => {

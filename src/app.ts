@@ -12,6 +12,8 @@ import { db } from './db/client.js';
 import { logger } from './utils/logger.js';
 import { manejadorErrores, rutaNoEncontrada } from './middlewares/errorHandler.js';
 import {authRouter} from './modules/auth/auth.routes.js'
+import { clientesRouter } from './modules/clientes/clientes.routes.js';
+import { viajesRouter } from './modules/viajes/viajes.routes.js';
 
 export const app = express();
 
@@ -51,6 +53,9 @@ app.get('/health', async (_req, res) => {
 
 //Rutas de cada modulo
 app.use('/api/auth', authRouter);
+app.use('/api/clientes', clientesRouter);
+app.use('/api/viajes', viajesRouter);
+
 
 // Siempre al final: primero la ruta inexistente, luego el manejador de errores.
 app.use(rutaNoEncontrada);

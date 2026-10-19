@@ -1,0 +1,1 @@
+ALTER TABLE "viaje" ADD COLUMN "fecha_finalizacion" timestamp with time zone;

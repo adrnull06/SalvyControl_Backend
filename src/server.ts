@@ -6,9 +6,12 @@ import { app } from './app.js';
 import { env } from './config/env.js';
 import { pool } from './db/client.js';
 import { logger } from './utils/logger.js';
+import { programarTareas } from './jobs/viajes.job.js';
+
 
 const server = app.listen(env.PORT, () => {
   logger.info(`API escuchando en http://localhost:${env.PORT} (${env.NODE_ENV})`);
+  programarTareas();
 });
 
 const apagar = (senal: string) => {

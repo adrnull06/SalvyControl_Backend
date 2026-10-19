@@ -1,7 +1,7 @@
 // `date` guarda solo la fecha (sin hora), que es lo que necesita un viaje.
 // mode 'string' devuelve "2026-10-17" en vez de un objeto Date: evita problemas de zona horaria.
 // El check impide que la llegada sea anterior a la salida.
-import { pgTable, integer, varchar, date, check } from 'drizzle-orm/pg-core';
+import { pgTable, integer, varchar, date, check, timestamp } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 import { estadoViaje } from './catalogos.js';
 
@@ -14,6 +14,7 @@ export const viaje = pgTable(
     lugarDestino: varchar({ length: 50 }).notNull(),
     fechaSalida: date({ mode: 'string' }),
     fechaLlegada: date({ mode: 'string' }),
+    fechaFinalizacion: timestamp({ withTimezone: true }),
     idEstadoViaje: integer()
       .notNull()
       .references(() => estadoViaje.id, { onUpdate: 'cascade', onDelete: 'restrict' }),
