@@ -1,7 +1,8 @@
 // Aqui se validan las variables de entorno en archivo .env antes de arrancar
 // Si hay error, se dejan en claro antes
-import 'dotenv'
+import "dotenv/config";
 import {z} from 'zod' 
+
 
 //Con zod. Definimos esquema para comprobar despues que las variables esta correcta
 const envSchema = z.object({
@@ -20,3 +21,5 @@ if (!result.success) {
     console.error('Variables de entorno invalidas:\n' + z.prettifyError(result.error));
     process.exit(1);
 }
+
+export const env = result.data;

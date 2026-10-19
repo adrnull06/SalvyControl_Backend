@@ -1,0 +1,1110 @@
+{
+  "id": "fc8150fc-f445-4b1d-8221-7ee508ef2359",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.canal_pago": {
+      "name": "canal_pago",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "canal_pago_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "nombre": {
+          "name": "nombre",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "canal_pago_nombre_unique": {
+          "name": "canal_pago_nombre_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "nombre"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.estado_paquete": {
+      "name": "estado_paquete",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "estado_paquete_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "nombre": {
+          "name": "nombre",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "estado_paquete_nombre_unique": {
+          "name": "estado_paquete_nombre_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "nombre"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.estado_viaje": {
+      "name": "estado_viaje",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "estado_viaje_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "nombre": {
+          "name": "nombre",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "estado_viaje_nombre_unique": {
+          "name": "estado_viaje_nombre_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "nombre"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.metodo_entrega": {
+      "name": "metodo_entrega",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "metodo_entrega_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "nombre": {
+          "name": "nombre",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "metodo_entrega_nombre_unique": {
+          "name": "metodo_entrega_nombre_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "nombre"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.metodo_pago": {
+      "name": "metodo_pago",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "metodo_pago_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "nombre": {
+          "name": "nombre",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "metodo_pago_nombre_unique": {
+          "name": "metodo_pago_nombre_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "nombre"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.rol": {
+      "name": "rol",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "rol_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "nombre": {
+          "name": "nombre",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "rol_nombre_unique": {
+          "name": "rol_nombre_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "nombre"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.usuario": {
+      "name": "usuario",
+      "schema": "",
+      "columns": {
+        "id_usuario": {
+          "name": "id_usuario",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "usuario_id_usuario_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "usuario": {
+          "name": "usuario",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contrasena_hash": {
+          "name": "contrasena_hash",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_rol": {
+          "name": "id_rol",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "estado": {
+          "name": "estado",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'activo'"
+        },
+        "fecha_creacion": {
+          "name": "fecha_creacion",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "usuario_id_rol_rol_id_fk": {
+          "name": "usuario_id_rol_rol_id_fk",
+          "tableFrom": "usuario",
+          "tableTo": "rol",
+          "columnsFrom": [
+            "id_rol"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "usuario_usuario_unique": {
+          "name": "usuario_usuario_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "usuario"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "usuario_estado_chk": {
+          "name": "usuario_estado_chk",
+          "value": "\"usuario\".\"estado\" in ('activo', 'inactivo')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.cliente": {
+      "name": "cliente",
+      "schema": "",
+      "columns": {
+        "id_cliente": {
+          "name": "id_cliente",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "cliente_id_cliente_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "nombre": {
+          "name": "nombre",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "correo": {
+          "name": "correo",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "telefono": {
+          "name": "telefono",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "direccion": {
+          "name": "direccion",
+          "type": "varchar(150)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "observaciones": {
+          "name": "observaciones",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fecha_registro": {
+          "name": "fecha_registro",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.viaje": {
+      "name": "viaje",
+      "schema": "",
+      "columns": {
+        "id_viaje": {
+          "name": "id_viaje",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "viaje_id_viaje_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "codigo_viaje": {
+          "name": "codigo_viaje",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lugar_origen": {
+          "name": "lugar_origen",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lugar_destino": {
+          "name": "lugar_destino",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fecha_salida": {
+          "name": "fecha_salida",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fecha_llegada": {
+          "name": "fecha_llegada",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id_estado_viaje": {
+          "name": "id_estado_viaje",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "observaciones": {
+          "name": "observaciones",
+          "type": "varchar(150)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "viaje_id_estado_viaje_estado_viaje_id_fk": {
+          "name": "viaje_id_estado_viaje_estado_viaje_id_fk",
+          "tableFrom": "viaje",
+          "tableTo": "estado_viaje",
+          "columnsFrom": [
+            "id_estado_viaje"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "viaje_codigoViaje_unique": {
+          "name": "viaje_codigoViaje_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "codigo_viaje"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "viaje_fechas_chk": {
+          "name": "viaje_fechas_chk",
+          "value": "\"viaje\".\"fecha_llegada\" is null or \"viaje\".\"fecha_salida\" is null or \"viaje\".\"fecha_llegada\" >= \"viaje\".\"fecha_salida\""
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.historial_estado": {
+      "name": "historial_estado",
+      "schema": "",
+      "columns": {
+        "id_historial": {
+          "name": "id_historial",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "historial_estado_id_historial_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "id_paquete": {
+          "name": "id_paquete",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_estado": {
+          "name": "id_estado",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_usuario": {
+          "name": "id_usuario",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fecha_cambio": {
+          "name": "fecha_cambio",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "fecha_cambio_estado": {
+          "name": "fecha_cambio_estado",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "historial_estado_id_paquete_paquete_id_paquete_fk": {
+          "name": "historial_estado_id_paquete_paquete_id_paquete_fk",
+          "tableFrom": "historial_estado",
+          "tableTo": "paquete",
+          "columnsFrom": [
+            "id_paquete"
+          ],
+          "columnsTo": [
+            "id_paquete"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "historial_estado_id_estado_estado_paquete_id_fk": {
+          "name": "historial_estado_id_estado_estado_paquete_id_fk",
+          "tableFrom": "historial_estado",
+          "tableTo": "estado_paquete",
+          "columnsFrom": [
+            "id_estado"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "historial_estado_id_usuario_usuario_id_usuario_fk": {
+          "name": "historial_estado_id_usuario_usuario_id_usuario_fk",
+          "tableFrom": "historial_estado",
+          "tableTo": "usuario",
+          "columnsFrom": [
+            "id_usuario"
+          ],
+          "columnsTo": [
+            "id_usuario"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "uk_paquete_estado_fecha": {
+          "name": "uk_paquete_estado_fecha",
+          "nullsNotDistinct": false,
+          "columns": [
+            "id_paquete",
+            "id_estado",
+            "fecha_cambio_estado"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.paquete": {
+      "name": "paquete",
+      "schema": "",
+      "columns": {
+        "id_paquete": {
+          "name": "id_paquete",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "paquete_id_paquete_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "id_cliente": {
+          "name": "id_cliente",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_viaje": {
+          "name": "id_viaje",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "codigo_rastreo": {
+          "name": "codigo_rastreo",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tienda_procedencia": {
+          "name": "tienda_procedencia",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "descripcion": {
+          "name": "descripcion",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "observaciones": {
+          "name": "observaciones",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "peso_libras": {
+          "name": "peso_libras",
+          "type": "numeric(8, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_metodo_entrega": {
+          "name": "id_metodo_entrega",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lugar_entrega": {
+          "name": "lugar_entrega",
+          "type": "varchar(150)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fecha_hora_recepcion": {
+          "name": "fecha_hora_recepcion",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "id_estado_actual": {
+          "name": "id_estado_actual",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "idx_paquete_viaje": {
+          "name": "idx_paquete_viaje",
+          "columns": [
+            {
+              "expression": "id_viaje",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_paquete_cliente": {
+          "name": "idx_paquete_cliente",
+          "columns": [
+            {
+              "expression": "id_cliente",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "paquete_id_cliente_cliente_id_cliente_fk": {
+          "name": "paquete_id_cliente_cliente_id_cliente_fk",
+          "tableFrom": "paquete",
+          "tableTo": "cliente",
+          "columnsFrom": [
+            "id_cliente"
+          ],
+          "columnsTo": [
+            "id_cliente"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "paquete_id_viaje_viaje_id_viaje_fk": {
+          "name": "paquete_id_viaje_viaje_id_viaje_fk",
+          "tableFrom": "paquete",
+          "tableTo": "viaje",
+          "columnsFrom": [
+            "id_viaje"
+          ],
+          "columnsTo": [
+            "id_viaje"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
+        "paquete_id_metodo_entrega_metodo_entrega_id_fk": {
+          "name": "paquete_id_metodo_entrega_metodo_entrega_id_fk",
+          "tableFrom": "paquete",
+          "tableTo": "metodo_entrega",
+          "columnsFrom": [
+            "id_metodo_entrega"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "paquete_id_estado_actual_estado_paquete_id_fk": {
+          "name": "paquete_id_estado_actual_estado_paquete_id_fk",
+          "tableFrom": "paquete",
+          "tableTo": "estado_paquete",
+          "columnsFrom": [
+            "id_estado_actual"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "paquete_codigoRastreo_unique": {
+          "name": "paquete_codigoRastreo_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "codigo_rastreo"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "paquete_peso_chk": {
+          "name": "paquete_peso_chk",
+          "value": "\"paquete\".\"peso_libras\" > 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.abono": {
+      "name": "abono",
+      "schema": "",
+      "columns": {
+        "id_abono": {
+          "name": "id_abono",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "abono_id_abono_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "id_pago": {
+          "name": "id_pago",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "monto": {
+          "name": "monto",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fecha_pago": {
+          "name": "fecha_pago",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "id_canal_pago": {
+          "name": "id_canal_pago",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_metodo_pago": {
+          "name": "id_metodo_pago",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_usuario": {
+          "name": "id_usuario",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "idx_abono_pago": {
+          "name": "idx_abono_pago",
+          "columns": [
+            {
+              "expression": "id_pago",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "abono_id_pago_pago_id_pago_fk": {
+          "name": "abono_id_pago_pago_id_pago_fk",
+          "tableFrom": "abono",
+          "tableTo": "pago",
+          "columnsFrom": [
+            "id_pago"
+          ],
+          "columnsTo": [
+            "id_pago"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "abono_id_canal_pago_canal_pago_id_fk": {
+          "name": "abono_id_canal_pago_canal_pago_id_fk",
+          "tableFrom": "abono",
+          "tableTo": "canal_pago",
+          "columnsFrom": [
+            "id_canal_pago"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "abono_id_metodo_pago_metodo_pago_id_fk": {
+          "name": "abono_id_metodo_pago_metodo_pago_id_fk",
+          "tableFrom": "abono",
+          "tableTo": "metodo_pago",
+          "columnsFrom": [
+            "id_metodo_pago"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "abono_id_usuario_usuario_id_usuario_fk": {
+          "name": "abono_id_usuario_usuario_id_usuario_fk",
+          "tableFrom": "abono",
+          "tableTo": "usuario",
+          "columnsFrom": [
+            "id_usuario"
+          ],
+          "columnsTo": [
+            "id_usuario"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "abono_monto_chk": {
+          "name": "abono_monto_chk",
+          "value": "\"abono\".\"monto\" > 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.pago": {
+      "name": "pago",
+      "schema": "",
+      "columns": {
+        "id_pago": {
+          "name": "id_pago",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "pago_id_pago_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "id_paquete": {
+          "name": "id_paquete",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "costo_servicio": {
+          "name": "costo_servicio",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "costo_compra": {
+          "name": "costo_compra",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'0'"
+        },
+        "id_canal_pago": {
+          "name": "id_canal_pago",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_metodo_pago": {
+          "name": "id_metodo_pago",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fecha_creacion": {
+          "name": "fecha_creacion",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "pago_id_paquete_paquete_id_paquete_fk": {
+          "name": "pago_id_paquete_paquete_id_paquete_fk",
+          "tableFrom": "pago",
+          "tableTo": "paquete",
+          "columnsFrom": [
+            "id_paquete"
+          ],
+          "columnsTo": [
+            "id_paquete"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "pago_id_canal_pago_canal_pago_id_fk": {
+          "name": "pago_id_canal_pago_canal_pago_id_fk",
+          "tableFrom": "pago",
+          "tableTo": "canal_pago",
+          "columnsFrom": [
+            "id_canal_pago"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "pago_id_metodo_pago_metodo_pago_id_fk": {
+          "name": "pago_id_metodo_pago_metodo_pago_id_fk",
+          "tableFrom": "pago",
+          "tableTo": "metodo_pago",
+          "columnsFrom": [
+            "id_metodo_pago"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "pago_idPaquete_unique": {
+          "name": "pago_idPaquete_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "id_paquete"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "pago_costos_chk": {
+          "name": "pago_costos_chk",
+          "value": "\"pago\".\"costo_servicio\" >= 0 and \"pago\".\"costo_compra\" >= 0"
+        },
+        "pago_total_chk": {
+          "name": "pago_total_chk",
+          "value": "\"pago\".\"costo_servicio\" + \"pago\".\"costo_compra\" > 0"
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
