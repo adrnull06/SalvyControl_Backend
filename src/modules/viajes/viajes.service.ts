@@ -1,14 +1,11 @@
-import { and, asc, count, desc, eq, ilike, min, ne, or, sql, type SQL } from 'drizzle-orm';
+import { and, asc, count, desc, eq, ilike, min, ne, or, sql,gte, isNull, type SQL } from 'drizzle-orm';
 import { db } from '../../db/client.js';
 import { estadoViaje, paquete, viaje } from '../../db/schema/index.js';
 import { AppError, codigoPg, conflicto, noEncontrado } from '../../utils/errors.js';
 import { generarCodigoViaje } from '../../utils/codigos.js';
 import { patronBusqueda } from '../../utils/validacion.js';
 import type { CambiosViaje, DatosViaje, ListarViajes } from './viajes.schemas.js';
-
-// "Hoy" según El Salvador. El servidor en la nube está en UTC: a las 7 pm en El Salvador
-// ya es "mañana" en UTC, y sin esto un viaje cambiaría de estado un día antes.
-const HOY = sql`(now() at time zone 'America/El_Salvador')::date`;
+import { HOY_SV as HOY } from '../../utils/fechas.js';
 
 const filtroAEstado = { planificado: 'Planificado', en_proceso: 'En proceso', finalizado: 'Finalizado' } as const;
 
@@ -47,15 +44,13 @@ const consultaViajes = (donde?: SQL) =>
 export async function listarViajes({ filtro, q }: ListarViajes) {
   const patron = q ? patronBusqueda(q) : null;
   const condiciones = [
-    filtro !== 'todos' ? eq(estadoViaje.nombre, filtroAEstado[filtro]) : undefined,
-    patron
-      ? or(
-          ilike(viaje.codigoViaje, patron),
-          ilike(viaje.lugarOrigen, patron),
-          ilike(viaje.lugarDestino, patron),
-          ilike(viaje.observaciones, patron),
-        )
-      : undefined,
+   filtro === 'todos'
+  ? or(
+      ne(estadoViaje.nombre, 'Finalizado'),
+      isNull(viaje.fechaFinalizacion),
+      gte(viaje.fechaFinalizacion, sql`now() - interval '6 months'`),
+    )
+  : undefined,
   ];
   // Las tarjetas no se paginan (tu documento solo pide paginación en otras tablas);
   // el límite es una red de seguridad para que la respuesta nunca crezca sin control.
@@ -148,10 +143,10 @@ export async function actualizarViaje(id: number, cambios: CambiosViaje) {
   // Comparamos fechas con lo que quedará guardado (lo nuevo, o lo que ya había).
   const salida = cambios.fechaSalida ?? actual.fechaSalida;
   const llegada = cambios.fechaLlegada ?? actual.fechaLlegada;
-  if (salida && llegada && llegada < salida) {
-    throw new AppError(400, 'FECHAS_INVALIDAS', 'La fecha de llegada no puede ser anterior a la de salida');
-  }
-
+  // Un viaje finalizado es un registro histórico: solo se permite corregir sus observaciones.
+ if (actual.estado === 'Finalizado' && Object.keys(cambios).some((k) => k !== 'observaciones')) {
+  throw new AppError(409, 'VIAJE_FINALIZADO', 'Un viaje finalizado solo permite corregir las observaciones');
+}
   // Ojo: codigoViaje NO se toca aunque cambien origen o destino (es un identificador).
   const { estado, ...resto } = cambios;
   await db

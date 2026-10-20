@@ -14,6 +14,9 @@ import { manejadorErrores, rutaNoEncontrada } from './middlewares/errorHandler.j
 import {authRouter} from './modules/auth/auth.routes.js'
 import { clientesRouter } from './modules/clientes/clientes.routes.js';
 import { viajesRouter } from './modules/viajes/viajes.routes.js';
+import { paquetesRouter } from './modules/paquetes/paquetes.routes.js';
+import { catalogosRouter } from './modules/catalogos/catalogos.routes.js';
+import { pagosRouter } from './modules/pagos/pagos.routes.js';
 
 export const app = express();
 
@@ -55,6 +58,9 @@ app.get('/health', async (_req, res) => {
 app.use('/api/auth', authRouter);
 app.use('/api/clientes', clientesRouter);
 app.use('/api/viajes', viajesRouter);
+app.use('/api/paquetes', paquetesRouter);
+app.use('/api/catalogos', catalogosRouter);
+app.use('/api/pagos', pagosRouter);
 
 
 // Siempre al final: primero la ruta inexistente, luego el manejador de errores.

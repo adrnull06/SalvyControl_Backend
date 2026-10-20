@@ -33,3 +33,6 @@ export const armarPaginacion = (pagina: number, total: number) => ({
   total,
   totalPaginas: Math.max(1, Math.ceil(total / POR_PAGINA)),
 });
+
+export const textoOpcional = (max: number) =>
+  z.string().trim().max(max).transform((v) => v || null).nullable().optional();
