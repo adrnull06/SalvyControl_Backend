@@ -5,6 +5,7 @@ import { rol, usuario } from '../../db/schema/index.js';
 import { AppError, codigoPg, conflicto, noEncontrado, prohibido } from '../../utils/errors.js';
 import { patronBusqueda } from '../../utils/validacion.js';
 import type { CambiosUsuario, DatosUsuario, ListarUsuarios } from './usuarios.schemas.js';
+import { filtroTexto } from '../../utils/busqueda.js';
 
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0]; // tipo de `tx` dentro de una transacción
 const MAX_SUPERADMIN = 2;
@@ -23,11 +24,10 @@ const consultaUsuarios = (donde?: SQL) =>
   db.select(columnas).from(usuario).innerJoin(rol, eq(usuario.idRol, rol.id)).where(donde);
 
 export async function listarUsuarios({ filtro, q }: ListarUsuarios) {
-  const patron = q ? patronBusqueda(q) : null;
   const donde = and(
     filtro === 'activos' ? eq(usuario.estado, 'activo') : undefined,
     filtro === 'inactivos' ? eq(usuario.estado, 'inactivo') : undefined,
-    patron ? or(ilike(usuario.usuario, patron), ilike(rol.nombre, patron), ilike(usuario.estado, patron)) : undefined,
+    filtroTexto(q, [usuario.usuario, rol.nombre, usuario.estado]),
   );
   // Sin paginación (pocos usuarios); el límite es solo una red de seguridad.
   const datos = await consultaUsuarios(donde).orderBy(desc(usuario.fechaCreacion), desc(usuario.idUsuario)).limit(100);

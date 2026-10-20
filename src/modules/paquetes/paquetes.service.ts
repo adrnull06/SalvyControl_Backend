@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq, ilike, inArray, or, sql, type SQL } from 'drizzle-orm';
+import { and, asc, count, desc, eq, inArray, isNull, sql, type SQL } from 'drizzle-orm';
 import { db } from '../../db/client.js';
 import {
   cliente, estadoPaquete, estadoViaje, historialEstado, metodoEntrega, pago, paquete, usuario, viaje,
@@ -8,6 +8,7 @@ import { generarCodigoPaquete } from '../../utils/codigos.js';
 import { HOY_SV } from '../../utils/fechas.js';
 import { POR_PAGINA, armarPaginacion, patronBusqueda } from '../../utils/validacion.js';
 import type { CambiosPaquete, DatosPaquete, ListarPaquetes } from './paquetes.schemas.js';
+import { filtroTexto } from '../../utils/busqueda.js';
 
 // Columnas que ve el frontend: paquete + cliente + estado + método de entrega + viaje + precio.
 // Van "planas" (clienteNombre, viajeOrigen...) porque con LEFT JOIN el viaje puede no existir.
@@ -50,29 +51,35 @@ const consultaPaquetes = (donde?: SQL) =>
 const filtroAEstado = { listos: 'Listo para entregar', en_transito: 'En tránsito' } as const;
 const masRecientes = [desc(paquete.fechaHoraRecepcion), desc(paquete.idPaquete)];
 // El segundo criterio (id) hace el orden estable entre páginas.
-const ordenes = { todos: [asc(paquete.idPaquete)], recientes: masRecientes, listos: masRecientes, en_transito: masRecientes };
+const ordenes = {
+  todos: [asc(paquete.idPaquete)],
+  recientes: masRecientes,
+  listos: masRecientes,
+  en_transito: masRecientes,
+  sin_pago: masRecientes,
+};
 
 export async function listarPaquetes({ pagina, q, filtro }: ListarPaquetes) {
-  const patron = q ? patronBusqueda(q) : null;
   const donde = and(
     filtro === 'listos' || filtro === 'en_transito' ? eq(estadoPaquete.nombre, filtroAEstado[filtro]) : undefined,
-    // Busca en lo que muestra la tabla. Por eso un clic en un correo o en un código de viaje
-    // (que el frontend manda como ?q=) devuelve justo los paquetes relacionados.
-    patron
-      ? or(
-          ilike(paquete.codigoRastreo, patron),
-          ilike(viaje.codigoViaje, patron),
-          ilike(cliente.nombre, patron),
-          ilike(cliente.correo, patron),
-          ilike(cliente.telefono, patron),
-          ilike(paquete.tiendaProcedencia, patron),
-          ilike(paquete.descripcion, patron),
-          ilike(estadoPaquete.nombre, patron),
-        )
-      : undefined,
+    // "Sin pago" = paquetes que no tienen fila en la tabla pago (el LEFT JOIN deja pago.id_pago en NULL).
+    filtro === 'sin_pago' ? isNull(pago.idPago) : undefined,
+    filtroTexto(
+      q,
+      [
+        paquete.codigoRastreo,
+        viaje.codigoViaje,
+        cliente.nombre,
+        cliente.correo,
+        paquete.tiendaProcedencia,
+        paquete.descripcion,
+        estadoPaquete.nombre,
+      ],
+      [cliente.telefono],
+    ),
   );
 
-  // El conteo usa solo los JOIN que el filtro necesita; respeta búsqueda y filtro rápido.
+  // El conteo ahora también une `pago`: el filtro sin_pago lo necesita, y así el total siempre coincide con la lista.
   const [[conteo], datos] = await Promise.all([
     db
       .select({ total: count() })
@@ -80,6 +87,7 @@ export async function listarPaquetes({ pagina, q, filtro }: ListarPaquetes) {
       .innerJoin(cliente, eq(paquete.idCliente, cliente.idCliente))
       .innerJoin(estadoPaquete, eq(paquete.idEstadoActual, estadoPaquete.id))
       .leftJoin(viaje, eq(paquete.idViaje, viaje.idViaje))
+      .leftJoin(pago, eq(pago.idPaquete, paquete.idPaquete))
       .where(donde),
     consultaPaquetes(donde)
       .orderBy(...ordenes[filtro])
@@ -108,11 +116,10 @@ export async function detallePaquete(id: number) {
   return { ...p, historial };
 }
 
-// Opciones para el combo de "Nuevo pago": código + ORIGEN (tienda) + cliente, como pediste.
+// Opciones para el combo de "Nuevo pago": código + ORIGEN (tienda) + cliente.
 // `tienePago` permite al frontend avisar si ese paquete ya tiene un pago (solo puede haber uno).
 // Máximo 20 resultados: es un buscador mientras se escribe, no una lista completa.
 export async function opcionesPaquetes(q?: string) {
-  const patron = q ? patronBusqueda(q) : null;
   return db
     .select({
       idPaquete: paquete.idPaquete,
@@ -126,11 +133,7 @@ export async function opcionesPaquetes(q?: string) {
     .innerJoin(cliente, eq(paquete.idCliente, cliente.idCliente))
     .innerJoin(estadoPaquete, eq(paquete.idEstadoActual, estadoPaquete.id))
     .leftJoin(pago, eq(pago.idPaquete, paquete.idPaquete))
-    .where(
-      patron
-        ? or(ilike(paquete.codigoRastreo, patron), ilike(paquete.tiendaProcedencia, patron), ilike(cliente.nombre, patron))
-        : undefined,
-    )
+    .where(filtroTexto(q, [paquete.codigoRastreo, paquete.tiendaProcedencia, cliente.nombre]))
     .orderBy(desc(paquete.idPaquete))
     .limit(20);
 }

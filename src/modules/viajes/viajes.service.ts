@@ -6,6 +6,7 @@ import { generarCodigoViaje } from '../../utils/codigos.js';
 import { patronBusqueda } from '../../utils/validacion.js';
 import type { CambiosViaje, DatosViaje, ListarViajes } from './viajes.schemas.js';
 import { HOY_SV as HOY } from '../../utils/fechas.js';
+import { filtroTexto } from '../../utils/busqueda.js';
 
 const filtroAEstado = { planificado: 'Planificado', en_proceso: 'En proceso', finalizado: 'Finalizado' } as const;
 
@@ -42,18 +43,20 @@ const consultaViajes = (donde?: SQL) =>
     .groupBy(viaje.idViaje, estadoViaje.id);
 
 export async function listarViajes({ filtro, q }: ListarViajes) {
-  const patron = q ? patronBusqueda(q) : null;
   const condiciones = [
-   filtro === 'todos'
-  ? or(
-      ne(estadoViaje.nombre, 'Finalizado'),
-      isNull(viaje.fechaFinalizacion),
-      gte(viaje.fechaFinalizacion, sql`now() - interval '6 months'`),
-    )
-  : undefined,
+    filtro !== 'todos' ? eq(estadoViaje.nombre, filtroAEstado[filtro]) : undefined,
+    // En "Todos" ocultamos los finalizados hace más de 6 meses. NO se borra nada:
+    // siguen en la BD y salen con el filtro "Finalizados".
+    filtro === 'todos'
+      ? or(
+          ne(estadoViaje.nombre, 'Finalizado'),
+          isNull(viaje.fechaFinalizacion),
+          gte(viaje.fechaFinalizacion, sql`now() - interval '6 months'`),
+        )
+      : undefined,
+    filtroTexto(q, [viaje.codigoViaje, viaje.lugarOrigen, viaje.lugarDestino, viaje.observaciones]),
   ];
-  // Las tarjetas no se paginan (tu documento solo pide paginación en otras tablas);
-  // el límite es una red de seguridad para que la respuesta nunca crezca sin control.
+  // Las tarjetas no se paginan; el límite es una red de seguridad.
   const datos = await consultaViajes(and(...condiciones))
     .orderBy(desc(viaje.fechaSalida), desc(viaje.idViaje))
     .limit(100);

@@ -1,10 +1,11 @@
 // Lógica de clientes y acceso a la BD. Las rutas no tocan la BD directamente.
-import { asc, desc, eq, ilike, inArray, or } from 'drizzle-orm';
+import { asc, desc, eq, inArray } from 'drizzle-orm';
 import { db } from '../../db/client.js';
 import { cliente, paquete } from '../../db/schema/index.js';
 import { AppError, noEncontrado } from '../../utils/errors.js';
-import { POR_PAGINA, armarPaginacion, patronBusqueda } from '../../utils/validacion.js';
+import { POR_PAGINA, armarPaginacion } from '../../utils/validacion.js';
 import type { CambiosCliente, DatosCliente, ListarClientes } from './clientes.schemas.js';
+import { filtroTexto } from '../../utils/busqueda.js';
 
 // Cada filtro rápido es un orden. El segundo criterio (id) hace el orden ESTABLE: sin él,
 // dos clientes con el mismo nombre podrían aparecer en dos páginas distintas o repetirse.
@@ -15,20 +16,11 @@ const ordenes = {
 };
 
 export async function listarClientes({ pagina, q, orden }: ListarClientes) {
-  // Búsqueda en todas las columnas visibles de la tabla. ilike = ignora mayúsculas/minúsculas.
-  // (Un índice normal no acelera '%texto%', pero con cientos de clientes es instantáneo.)
-  const patron = q ? patronBusqueda(q) : null;
-  const donde = patron
-    ? or(
-        ilike(cliente.nombre, patron),
-        ilike(cliente.correo, patron),
-        ilike(cliente.telefono, patron),
-        ilike(cliente.direccion, patron),
-      )
-    : undefined;
+  // Búsqueda en las columnas visibles, sin importar mayúsculas ni tildes.
+  // El teléfono va aparte para que "7000-1234" y "70001234" se encuentren entre sí.
+  const donde = filtroTexto(q, [cliente.nombre, cliente.correo, cliente.direccion], [cliente.telefono]);
 
-  // Total y página se piden a la vez (no dependen entre sí). El total respeta la búsqueda,
-  // por eso "Mostrando 3 de 3 clientes" es correcto al filtrar.
+  // Total y página se piden a la vez. El total respeta la búsqueda ("Mostrando 3 de 3").
   const [total, datos] = await Promise.all([
     db.$count(cliente, donde),
     db

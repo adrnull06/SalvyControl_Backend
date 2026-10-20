@@ -30,7 +30,7 @@ export const actualizarPaqueteSchema = paqueteBase
 export const listarPaquetesSchema = z.object({
   pagina: paginaSchema,
   q: busquedaSchema,
-  filtro: z.enum(['todos', 'recientes', 'listos', 'en_transito']).default('todos'),
+  filtro: z.enum(['todos', 'recientes', 'listos', 'en_transito', 'sin_pago']).default('todos'),
 });
 
 export const opcionesPaquetesSchema = z.object({ q: busquedaSchema });

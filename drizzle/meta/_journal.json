@@ -15,6 +15,13 @@
       "when": 1792448845476,
       "tag": "0001_huge_karma",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792509197375,
+      "tag": "0002_extension_unaccent",
+      "breakpoints": true
     }
   ]
 }

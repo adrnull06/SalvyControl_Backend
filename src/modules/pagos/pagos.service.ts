@@ -2,8 +2,9 @@ import { and, asc, count, desc, eq, ilike, inArray, ne, or, sql, type SQL } from
 import { db } from '../../db/client.js';
 import { abono, canalPago, cliente, metodoPago, paquete, pago, usuario, viaje } from '../../db/schema/index.js';
 import { AppError, conflicto, noEncontrado } from '../../utils/errors.js';
-import { POR_PAGINA, armarPaginacion, patronBusqueda } from '../../utils/validacion.js';
+import { POR_PAGINA, armarPaginacion } from '../../utils/validacion.js';
 import type { CambiosAbono, CambiosPago, DatosAbono, DatosPago, ListarPagos } from './pagos.schemas.js';
+import { filtroTexto } from '../../utils/busqueda.js';
 
 const POR_DEFINIR = 'Por definir';
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0]; // tipo de `tx` dentro de una transacción
@@ -83,46 +84,49 @@ const consultaPagos = (donde?: SQL) =>
         .where(donde);
 
 export async function listarPagos({ pagina, q, filtro }: ListarPagos) {
-    const patron = q ? patronBusqueda(q) : null;
-    const donde = and(
-        filtro === 'pendientes' ? sql`${pagadoSql} = 0` : undefined,
-        filtro === 'parciales' ? sql`${pagadoSql} > 0 and ${pagadoSql} < ${totalSql}` : undefined,
-        filtro === 'recientes' ? sql`${pagadoSql} > 0` : undefined, // solo pagos con dinero recibido
-        patron
-            ? or(
-                ilike(paquete.codigoRastreo, patron),
-                ilike(viaje.codigoViaje, patron),
-                ilike(paquete.tiendaProcedencia, patron),
-                ilike(cliente.nombre, patron),
-                ilike(cliente.correo, patron),
-                ilike(cliente.telefono, patron),
-                ilike(canalPago.nombre, patron),
-                ilike(metodoPago.nombre, patron),
-                ilike(estadoSql, patron),
-            )
-            : undefined,
-    );
+  const donde = and(
+    filtro === 'pendientes' ? sql`${pagadoSql} = 0` : undefined,
+    filtro === 'parciales' ? sql`${pagadoSql} > 0 and ${pagadoSql} < ${totalSql}` : undefined,
+    filtro === 'recientes' ? sql`${pagadoSql} > 0` : undefined, // solo pagos con dinero recibido
+    filtroTexto(
+      q,
+      [
+        paquete.codigoRastreo,
+        viaje.codigoViaje,
+        paquete.tiendaProcedencia,
+        cliente.nombre,
+        cliente.correo,
+        canalPago.nombre,
+        metodoPago.nombre,
+        estadoSql,
+      ],
+      [cliente.telefono],
+    ),
+  );
 
-    // El conteo necesita los mismos JOIN que el filtro (si no, el total no coincidiría con la lista).
-    const [[conteo], datos] = await Promise.all([
-        db
-            .select({ total: count() })
-            .from(pago)
-            .innerJoin(paquete, eq(pago.idPaquete, paquete.idPaquete))
-            .innerJoin(cliente, eq(paquete.idCliente, cliente.idCliente))
-            .leftJoin(viaje, eq(paquete.idViaje, viaje.idViaje))
-            .leftJoin(resumen, eq(resumen.idPago, pago.idPago))
-            .leftJoin(ultimoAbono, eq(ultimoAbono.idPago, pago.idPago))
-            .innerJoin(canalPago, eq(canalPago.id, canalIdSql))
-            .innerJoin(metodoPago, eq(metodoPago.id, metodoIdSql))
-            .where(donde),
-        consultaPagos(donde)
-            // La búsqueda por código de viaje necesita ese JOIN también en la lista (ver nota abajo).
-            .orderBy(...(filtro === 'recientes' ? [desc(resumen.ultima), desc(pago.idPago)] : [desc(pago.fechaCreacion), desc(pago.idPago)]))
-            .limit(POR_PAGINA)
-            .offset((pagina - 1) * POR_PAGINA),
-    ]);
-    return { datos, paginacion: armarPaginacion(pagina, conteo?.total ?? 0) };
+  // El conteo necesita los mismos JOIN que la lista (si no, el total no coincidiría).
+  const [[conteo], datos] = await Promise.all([
+    db
+      .select({ total: count() })
+      .from(pago)
+      .innerJoin(paquete, eq(pago.idPaquete, paquete.idPaquete))
+      .innerJoin(cliente, eq(paquete.idCliente, cliente.idCliente))
+      .leftJoin(viaje, eq(paquete.idViaje, viaje.idViaje))
+      .leftJoin(resumen, eq(resumen.idPago, pago.idPago))
+      .leftJoin(ultimoAbono, eq(ultimoAbono.idPago, pago.idPago))
+      .innerJoin(canalPago, eq(canalPago.id, canalIdSql))
+      .innerJoin(metodoPago, eq(metodoPago.id, metodoIdSql))
+      .where(donde),
+    consultaPagos(donde)
+      .orderBy(
+        ...(filtro === 'recientes'
+          ? [desc(resumen.ultima), desc(pago.idPago)]
+          : [desc(pago.fechaCreacion), desc(pago.idPago)]),
+      )
+      .limit(POR_PAGINA)
+      .offset((pagina - 1) * POR_PAGINA),
+  ]);
+  return { datos, paginacion: armarPaginacion(pagina, conteo?.total ?? 0) };
 }
 
 export async function obtenerPago(id: number) {

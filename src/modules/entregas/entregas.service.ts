@@ -7,6 +7,7 @@ import { POR_PAGINA, armarPaginacion, patronBusqueda } from '../../utils/validac
 import { estadoSql, pagadoSql, resumen, totalSql } from '../pagos/pagos.service.js';
 import { cambiarEstado } from '../paquetes/paquetes.service.js';
 import type { ListarEntregas } from './entregas.schemas.js';
+import { filtroTexto } from '../../utils/busqueda.js';
 
 // Si el paquete no tiene pago, el estado de pago "calculado" diría "Pendiente" (suma 0),
 // pero eso sería engañoso: no hay deuda registrada. Lo distinguimos con "Sin pago".
@@ -42,32 +43,43 @@ const columnas = {
 };
 
 export async function listarEntregas({ pagina, q, filtro }: ListarEntregas) {
-  const patron = q ? patronBusqueda(q) : null;
   const donde = and(
-   filtro === 'todas'
-  ? or(
-      eq(estadoPaquete.nombre, 'Listo para entregar'),
-      sql`${estadoPaquete.nombre} = 'Entregado' and exists (
-        select 1 from historial_estado h
-        where h.id_paquete = ${paquete.idPaquete}
-          and h.id_estado = ${paquete.idEstadoActual}
-          and h.fecha_cambio >= now() - interval '30 days')`,
-    )
-  : undefined,
-    patron
+    // "Todas" = los Listos para entregar + los Entregados en los últimos 30 días.
+    filtro === 'todas'
       ? or(
-          ilike(paquete.codigoRastreo, patron),
-          ilike(viaje.codigoViaje, patron),
-          ilike(cliente.nombre, patron),
-          ilike(cliente.correo, patron),
-          ilike(cliente.telefono, patron),
-          ilike(cliente.direccion, patron),
-          ilike(paquete.lugarEntrega, patron),
-          ilike(paquete.observaciones, patron),
-          ilike(metodoEntrega.nombre, patron),
-          ilike(estadoCobro, patron),
+          eq(estadoPaquete.nombre, 'Listo para entregar'),
+          sql`${estadoPaquete.nombre} = 'Entregado' and exists (
+            select 1 from historial_estado h
+            where h.id_paquete = ${paquete.idPaquete}
+              and h.id_estado = ${paquete.idEstadoActual}
+              and h.fecha_cambio >= now() - interval '30 days')`,
         )
       : undefined,
+    // "Listas" = solo los que esperan ser entregados.
+    filtro === 'listas' ? eq(estadoPaquete.nombre, 'Listo para entregar') : undefined,
+    // "Hoy" según El Salvador, mirando el historial (no una columna en el paquete).
+    filtro === 'hoy'
+      ? sql`${estadoPaquete.nombre} = 'Entregado' and exists (
+          select 1 from historial_estado h
+          where h.id_paquete = ${paquete.idPaquete}
+            and h.id_estado = ${paquete.idEstadoActual}
+            and h.fecha_cambio_estado = ${HOY_SV})`
+      : undefined,
+    filtroTexto(
+      q,
+      [
+        paquete.codigoRastreo,
+        viaje.codigoViaje,
+        cliente.nombre,
+        cliente.correo,
+        cliente.direccion,
+        paquete.lugarEntrega,
+        paquete.observaciones,
+        metodoEntrega.nombre,
+        estadoCobro,
+      ],
+      [cliente.telefono],
+    ),
   );
 
   // Los dos SELECT llevan los MISMOS joins: si difirieran, "Mostrando x de y" no coincidiría con la lista.
@@ -92,13 +104,12 @@ export async function listarEntregas({ pagina, q, filtro }: ListarEntregas) {
       .leftJoin(pago, eq(pago.idPaquete, paquete.idPaquete))
       .leftJoin(resumen, eq(resumen.idPago, pago.idPago))
       .where(donde)
-      .orderBy(desc(paquete.fechaHoraRecepcion), desc(paquete.idPaquete)) // el id desempata: orden estable entre páginas
+      .orderBy(desc(paquete.fechaHoraRecepcion), desc(paquete.idPaquete))
       .limit(POR_PAGINA)
       .offset((pagina - 1) * POR_PAGINA),
   ]);
   return { datos, paginacion: armarPaginacion(pagina, conteo?.total ?? 0) };
 }
-
 // Busca el id de un estado por su nombre (los ids vienen del seed, pero el nombre es lo estable).
 async function idEstadoPaquete(nombre: string) {
   const [e] = await db.select({ id: estadoPaquete.id }).from(estadoPaquete).where(eq(estadoPaquete.nombre, nombre)).limit(1);
