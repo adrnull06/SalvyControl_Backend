@@ -15,7 +15,7 @@ const aDinero = (c: number) => (c / 100).toFixed(2);
 
 // --- Todo lo calculado vive en SQL, así el estado nunca se desincroniza ---
 // Subconsulta: por cada pago, cuánto se ha cobrado y cuándo fue el último abono.
-const resumen = db
+export const resumen = db
     .select({
         idPago: abono.idPago,
         pagado: sql<string>`sum(${abono.monto})`.as('pagado'),
@@ -39,9 +39,9 @@ const ultimoAbono = db
 const canalIdSql = sql<number>`coalesce(${ultimoAbono.idCanalPago}, ${pago.idCanalPago})`;
 const metodoIdSql = sql<number>`coalesce(${ultimoAbono.idMetodoPago}, ${pago.idMetodoPago})`;
 
-const pagadoSql = sql`coalesce(${resumen.pagado}, 0)`; // sin abonos el resultado es NULL -> 0
-const totalSql = sql`${pago.costoServicio} + ${pago.costoCompra}`;
-const estadoSql = sql<'Pendiente' | 'Parcial' | 'Pagado'>`case
+export const pagadoSql = sql`coalesce(${resumen.pagado}, 0)`; // sin abonos el resultado es NULL -> 0
+export const totalSql = sql`${pago.costoServicio} + ${pago.costoCompra}`;
+export const estadoSql = sql<'Pendiente' | 'Parcial' | 'Pagado'>`case
   when ${pagadoSql} = 0 then 'Pendiente'
   when ${pagadoSql} < ${totalSql} then 'Parcial'
   else 'Pagado' end`;

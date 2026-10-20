@@ -206,7 +206,7 @@ export async function actualizarPaquete(id: number, cambios: CambiosPaquete) {
 // Cambia el estado de uno o varios paquetes y deja la huella en el historial (transacción).
 // `.for('update')` bloquea esas filas mientras dura la transacción: si dos personas cambian el
 // mismo paquete a la vez, la segunda espera en vez de pisar a la primera.
-export async function cambiarEstado(ids: number[], idEstado: number, idUsuario: number) {
+export async function cambiarEstado(ids: number[], idEstado: number, idUsuario: number, soloDesdeEstado?: number) {
   await exigirEstado(idEstado);
   return db.transaction(async (tx) => {
     const existentes = await tx
@@ -216,21 +216,26 @@ export async function cambiarEstado(ids: number[], idEstado: number, idUsuario: 
       .for('update');
     if (existentes.length === 0) throw noEncontrado('Paquete');
 
-    const aCambiar = existentes.filter((p) => p.estado !== idEstado).map((p) => p.id);
+    const aCambiar = existentes
+      .filter((p) => p.estado !== idEstado && (soloDesdeEstado === undefined || p.estado === soloDesdeEstado))
+      .map((p) => p.id);
     if (aCambiar.length > 0) {
       await tx.update(paquete).set({ idEstadoActual: idEstado }).where(inArray(paquete.idPaquete, aCambiar));
       await tx
         .insert(historialEstado)
         .values(aCambiar.map((idPaquete) => ({ idPaquete, idEstado, idUsuario, fechaCambioEstado: HOY_SV })))
-        // Mismo estado el mismo día (ej. corrección de un error): actualiza esa fila en vez de fallar.
         .onConflictDoUpdate({
           target: [historialEstado.idPaquete, historialEstado.idEstado, historialEstado.fechaCambioEstado],
           set: { fechaCambio: sql`now()`, idUsuario },
         });
     }
+    // sinCambio = ya estaban en el estado destino. noElegibles = estaban en otro estado distinto
+    // al exigido (solo puede ser > 0 si se usó soloDesdeEstado).
+    const sinCambio = existentes.filter((p) => p.estado === idEstado).length;
     return {
       cambiados: aCambiar.length,
-      sinCambio: existentes.length - aCambiar.length,
+      sinCambio,
+      noElegibles: existentes.length - aCambiar.length - sinCambio,
       noEncontrados: ids.length - existentes.length,
     };
   });

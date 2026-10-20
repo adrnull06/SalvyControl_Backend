@@ -17,6 +17,11 @@ import { viajesRouter } from './modules/viajes/viajes.routes.js';
 import { paquetesRouter } from './modules/paquetes/paquetes.routes.js';
 import { catalogosRouter } from './modules/catalogos/catalogos.routes.js';
 import { pagosRouter } from './modules/pagos/pagos.routes.js';
+import { entregasRouter } from './modules/entregas/entregas.routes.js';
+import { usuariosRouter } from './modules/usuarios/usuarios.routes.js';
+import { rastreoRouter } from './modules/rastreo/rastreo.routes.js';
+
+
 
 export const app = express();
 
@@ -61,6 +66,9 @@ app.use('/api/viajes', viajesRouter);
 app.use('/api/paquetes', paquetesRouter);
 app.use('/api/catalogos', catalogosRouter);
 app.use('/api/pagos', pagosRouter);
+app.use('/api/entregas', entregasRouter);
+app.use('/api/usuarios', usuariosRouter);
+app.use('/api/rastreo', rastreoRouter);
 
 
 // Siempre al final: primero la ruta inexistente, luego el manejador de errores.
